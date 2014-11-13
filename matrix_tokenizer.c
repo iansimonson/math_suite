@@ -1,12 +1,9 @@
 #include "matrix_tokenizer.h"
 
 
-struct TokenNode * tokenize(char * buffer) {
-    struct TokenNode * list = malloc(sizeof(struct TokenNode));
+struct TokenNode * matrix_tokenize(char * buffer) {
+    struct TokenNode * list = createToken("root",ROOTTOKEN);
     struct TokenNode * listPtr = list;
-    strcpy(list->name, "root");
-    list->type = ROOTTOKEN;
-    list->next = NULL;
 
     int state = STATE_SEARCHING;
     int tmp_type;
@@ -20,13 +17,13 @@ struct TokenNode * tokenize(char * buffer) {
         if(state == STATE_SEARCHING){
 
             if(tmp_type = isMatrixPart(*buffer)){
+                
+                tbptr = tokenBuf;
+                *tbptr++ = *buffer;
+                *tbptr = '\0';
 
-                struct TokenNode * tmp = malloc(sizeof(struct TokenNode));
-                tmp->name[0] = *buffer;
-                tmp->name[1] = '\0';
-                tmp->type = tmp_type;
-                tmp->next = NULL;
-
+                struct TokenNode *tmp = createToken(tokenBuf,tmp_type);
+                
                 //Add the token to the list
                 listPtr->next = tmp;
                 listPtr = listPtr->next;
@@ -40,8 +37,7 @@ struct TokenNode * tokenize(char * buffer) {
                 *tbptr++ = *buffer;
                 state = STATE_FOUNDVALUE;
 
-            } else if(*buffer == '\n' || *buffer == ' '){
-                
+            } else if(isWS(*buffer)){
                 ++buffer;
                 continue;
 
@@ -59,10 +55,7 @@ struct TokenNode * tokenize(char * buffer) {
                 *tbptr = '\0';
 
                 //Initialize a VALUE token
-                struct TokenNode * tmp = malloc(sizeof(struct TokenNode));
-                strcpy(tmp->name,tokenBuf);
-                tmp->next = NULL;
-                tmp->type = VALUE;
+                struct TokenNode * tmp = createToken(tokenBuf,VALUE);
 
                 //Add token to the list and reset the value buffer
                 listPtr->next = tmp;
@@ -86,32 +79,9 @@ struct TokenNode * tokenize(char * buffer) {
 }
 
 
-void statement(struct TokenNode * input) {
-    if(input == NULL)
-        fprintf(stderr, "Error: empty input\n");
-
-    else if(!strcmp(input->name,"root"))
-        statement(input->next);
-
-    else if(input && !strcmp(input->name,"[")){
-        matrix(input);
-    } else {
-        printf("unknown.\n");
-    }
-}
 
 
-
-int isANum(char * name){
-    while(*name) {
-        if(!isdigit(*name) && *name != '-')
-            return 0;
-
-        ++name;
-    }
-
-    return 1;
-}
+/* Helper methods for the tokenizing process */
 
 
 
