@@ -1,4 +1,4 @@
-#include "matProps.h"
+#include "matrix_properties.h"
 #include <stdio.h>
 #include <ctype.h>
 

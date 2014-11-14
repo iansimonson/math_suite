@@ -3,7 +3,7 @@
 #include "abstract_tokenizer.h"
 #include "expression_tokenizer.h"
 #include "matrix_tokenizer.h"
-#include "matProps.h"
+#include "matrix_properties.h"
 
 int main(){
 	char * expression = "[1 2:1 2]*[-1 2: -1 2]";
