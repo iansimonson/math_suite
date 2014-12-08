@@ -30,6 +30,7 @@ void destroy_matrix(struct Matrix * m1);
 void print_matrix(struct Matrix * mat);
 struct Matrix * mat_mult(struct Matrix * m1, struct Matrix * m2);
 struct Matrix * mat_add(struct Matrix * m1, struct Matrix * m2);
+struct Matrix * scalar_mult(struct Matrix * m, int s);
 
 //Get parameters of the matrix
 int getRows(struct Matrix* mat);

@@ -26,3 +26,13 @@ struct TokenNode * createToken(char * name, int type){
 
     return tmp;
 }
+
+void destroyTokens(struct TokenNode * head){
+    struct TokenNode * cur;
+    while(head){
+         cur = head
+         head = head->next;
+         cur->next = NULL;
+         free(cur);
+    }
+}

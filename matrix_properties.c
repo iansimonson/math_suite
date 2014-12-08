@@ -134,6 +134,19 @@ struct Matrix * mat_add(struct Matrix * m1, struct Matrix * m2){
     return result;
 }
 
+struct Matrix * scalar_mult(struct Matrix * m, int s){
+    int i,j;
+
+    for(i = 0; i < m->rows; ++i){
+        for(j = 0; j<m->cols; ++j){
+            m->mat[i][j] *= s;
+        }
+    }
+
+    return m;
+}
+
+
 struct Matrix * init_matrix(char * mat) {
     int rows = 0;
     int cols = 0;

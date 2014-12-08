@@ -26,6 +26,8 @@ struct TokenNode {
 
 struct TokenNode * createToken(char * name, int type);
 
+void destroyTokens(struct TokenNode * head);
+
 int isANum(char * name);
 int isWS(char c);
 
