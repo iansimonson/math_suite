@@ -40,6 +40,8 @@ void welcome(void){
 }
 
 void parseInput(const std::string & input){
+	Matrix tmp1(input.substr(0,input.find(']')+1));
+	Matrix tmp2()
 	if(input[0] == '['){
 		Matrix tmp(input.substr(0,input.find(']')+1));
 		display(tmp);
