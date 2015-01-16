@@ -15,6 +15,8 @@ public:
 	const static int MINUS = 5;
 	const static int MULT = 6;
 	const static int DIVIDE = 7;
+	const static int LPARENS = 8;
+	const static int RPARENS = 9;
 
 	const static std::string tokenNames[];
 

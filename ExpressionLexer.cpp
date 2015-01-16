@@ -13,11 +13,15 @@ bool ExpressionLexer::isScalar(){
 }
 
 Token ExpressionLexer::nextToken() {
+
 	while(this->c != EOF){
 		switch(this->c) {
 			case ' ': case '\t': case '\n': case '\r': ws(); continue;
 
 			case '[': return matrix();
+
+			case '(': consume(); return Token(LPARENS, "(");
+			case ')': consume(); return Token(RPARENS, ")");
 
 			case '+': consume(); return Token(PLUS, "+"); 
 			case '-': consume(); return Token(MINUS, "-");
@@ -34,6 +38,8 @@ Token ExpressionLexer::nextToken() {
 	return Token(EOF_TYPE, "<EOF>");
 }
 
+
+//Extracts the current scalar element
 Token ExpressionLexer::scalar() {
 	std::stringstream ss;
 	do { 
@@ -44,6 +50,8 @@ Token ExpressionLexer::scalar() {
 	return Token(SCALAR, ss.str());
 }
 
+
+//Extracts the current matrix element
 Token ExpressionLexer::matrix() {
 	std::stringstream ss;
 	do {
@@ -58,11 +66,14 @@ Token ExpressionLexer::matrix() {
 	return Token(MATRIX, ss.str());
 }
 
+//Consumes all whitespace until something useful shows up
 void ExpressionLexer::ws() {
 	while(this->c == ' ' || this->c == '\t' || this->c == '\n' || this->c == '\r')
 		this->consume();
 }
 
+//Allows different Lexers to display the token names
+//Tokens normally display their types just as numbers
 void ExpressionLexer::displayToken(Token t){
 	std::cout << "<'" << t.getText() << "'," << tokenNames[t.getType()] << ">" << std::endl;
 }
