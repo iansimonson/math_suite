@@ -26,11 +26,12 @@ public:
 
 	void displayToken(Token t);
 
+	Token nextToken();
+
 
 private:
 	bool isScalar();
 
-	Token nextToken();
 	Token matrix();
 	Token scalar();
 
