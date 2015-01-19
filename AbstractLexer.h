@@ -28,6 +28,11 @@ public:
 		else
 			throw;
 	}
+
+	virtual void rewind(){
+		p = 0;
+	}
+	
 	virtual Token nextToken() = 0;
 	virtual std::string getTokenNames(int tokenType) = 0;
 	virtual void displayToken(Token t) = 0;

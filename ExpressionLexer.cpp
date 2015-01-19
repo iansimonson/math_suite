@@ -8,8 +8,29 @@ std::string ExpressionLexer::getTokenNames(int tokenType){
 	return tokenNames[tokenType];
 }
 
-bool ExpressionLexer::isScalar(){
-	return isdigit(this->c) || this->c == '-' || this->c == '.';
+bool ExpressionLexer::isScalar(char t){
+	return isdigit(t) || t == '-' || t == '.';
+}
+
+bool ExpressionLexer::isSubtraction(){
+	//If there is a minus sign floating, assume subtraction
+	if(isWS(this->input[p+1]))
+		return true;
+
+
+	//Else, check to see if there was an operator or not beforehand
+	int tmp = (this->p) - 1;
+	while(tmp >= 0 && isWS(this->input[tmp]))
+		--tmp;
+
+	if(tmp >= 0 && this->input[tmp] == '+' || this->input[tmp] == '-' || this->input[tmp] == '*' || this->input[tmp] == '/' || tmp < 0)
+		return false;
+	else
+		return true;
+}
+
+bool ExpressionLexer::isWS(char t){
+	return t == ' ' || t == '\t' || t == '\n' || t == '\r';
 }
 
 Token ExpressionLexer::nextToken() {
@@ -24,12 +45,13 @@ Token ExpressionLexer::nextToken() {
 			case ')': consume(); return Token(RPARENS, ")");
 
 			case '+': consume(); return Token(PLUS, "+"); 
-			case '-': consume(); return Token(MINUS, "-");
+			case '-': if(isSubtraction()) {consume(); return Token(MINUS, "-");}
+					else {return scalar();}
 			case '*': consume(); return Token(MULT, "*");
 			case '/': consume(); return Token(DIVIDE, "/");
 
 			default:
-				if(isScalar()) return scalar();
+				if(isScalar(this->c)) return scalar();
 
 				throw 1;
 		}
@@ -45,7 +67,7 @@ Token ExpressionLexer::scalar() {
 	do { 
 		ss << this->c;
 		this->consume();	
-	} while(isScalar());
+	} while(isScalar(this->c));
 
 	return Token(SCALAR, ss.str());
 }
@@ -68,7 +90,7 @@ Token ExpressionLexer::matrix() {
 
 //Consumes all whitespace until something useful shows up
 void ExpressionLexer::ws() {
-	while(this->c == ' ' || this->c == '\t' || this->c == '\n' || this->c == '\r')
+	while(isWS(this->c))
 		this->consume();
 }
 

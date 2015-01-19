@@ -30,7 +30,9 @@ public:
 
 
 private:
-	bool isScalar();
+	bool isScalar(char t);
+	bool isSubtraction();
+	bool isWS(char t);
 
 	Token matrix();
 	Token scalar();

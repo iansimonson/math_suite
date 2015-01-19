@@ -1,13 +1,13 @@
 #include "ExpressionParser.h"
 
-ExpressionParser::ExpressionParser(const ExpressionLexer & input, int in_k):k(in_k),lexer(input){
+ExpressionParser::ExpressionParser(const ExpressionLexer & input, int in_k):k(in_k),lexer(input),rpn(){
 	lookahead = new Token[k];
 	
 	for(int i = 0; i < k; ++i)
 		consume();
 }
 
-ExpressionParser::ExpressionParser(const ExpressionParser & rhs):k(rhs.k),lexer(rhs.lexer),p(rhs.p) {
+ExpressionParser::ExpressionParser(const ExpressionParser & rhs):k(rhs.k),lexer(rhs.lexer),p(rhs.p),rpn(rhs.rpn) {
 	lookahead = new Token[k];
 	for(int i = 0; i < k; ++i)
 		lookahead[i] = rhs.lookahead[i];
@@ -32,6 +32,7 @@ void ExpressionParser::swap(ExpressionParser & rhs) {
 	std::swap(lexer,rhs.lexer);
 	std::swap(p, rhs.p);
 	std::swap(lookahead, rhs.lookahead);
+	std::swap(rpn,rhs.rpn);
 }
 
 void ExpressionParser::consume() {
@@ -65,7 +66,62 @@ void ExpressionParser::parse(){
 		t = lookupToken(1);	
 	}*/
 
-	expression();
+	//expression();
+	infixToRPN();
+	while(!rpn.empty()){
+		std::cout << rpn.front().getText() << " ";
+		rpn.pop();
+	}
+	std::cout << std::endl;
+	//evaluate();
+
+}
+
+void ExpressionParser::infixToRPN(){
+	//lexer.rewind();
+	std::stack<Token> ops;
+	Token t;
+	int tmpType;
+
+	while((t = lookupToken(1)).getType() != Lexer::EOF_TYPE){
+		consume();
+		tmpType = t.getType();
+		if(tmpType == ExpressionLexer::SCALAR || tmpType == ExpressionLexer::MATRIX){
+			rpn.push(t);
+		} else if(isOperator(tmpType)){
+			while(!ops.empty() && isOperator(ops.top().getType()) && tmpType/6 <= ops.top().getType()/6){
+				rpn.push(ops.top());
+				ops.pop();
+			}
+			ops.push(t);
+		} else if(tmpType == ExpressionLexer::LPARENS){
+			ops.push(t);
+		} else if(tmpType == ExpressionLexer::RPARENS){
+			while(ops.top().getType() != ExpressionLexer::LPARENS){
+				rpn.push(ops.top());
+				ops.pop();
+				if(ops.empty())
+					throw 10;
+			}
+			ops.pop();
+		} else {
+			throw 1;
+		}
+	}
+
+	while(!ops.empty()){
+		if(ops.top().getType() == ExpressionLexer::LPARENS){
+			throw 10;
+		} else {
+			rpn.push(ops.top());
+			ops.pop();	
+		}
+		
+	}
+}
+
+void ExpressionParser::evaluate() {
+
 }
 
 void ExpressionParser::expression(){

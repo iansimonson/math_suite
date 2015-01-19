@@ -32,3 +32,5 @@ Token.o: Token.cpp Token.h
 
 clean:
 	rm *.o
+	rm lexTest
+	rm parseTest

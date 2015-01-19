@@ -2,6 +2,8 @@
 #define EXPRESSION_PARSER_H
 
 #include "ExpressionLexer.h"
+#include <queue>
+#include <stack>
 
 class ExpressionParser {
 
@@ -25,6 +27,7 @@ public:
 
 private:
 	ExpressionLexer lexer;
+	std::queue<Token> rpn;
 	Token * lookahead;
 	int k;
 	int p = 0;
@@ -34,6 +37,9 @@ private:
 	void expression();
 	void op();
 	void element();
+
+	void infixToRPN();
+	void evaluate();
 };
 
 #endif
