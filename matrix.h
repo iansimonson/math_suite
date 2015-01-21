@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <cctype>
 #include <math.h>
@@ -34,6 +35,7 @@ class Matrix {
         
     
         void display(void) const;
+        std::string to_str(void) const;
 
         const std::vector<double> & operator[](std::size_t index) const;
         std::vector<double> & operator[](std::size_t index);

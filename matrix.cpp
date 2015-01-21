@@ -97,16 +97,19 @@ std::vector<std::vector<double> > Matrix::parseMatrix(const std::string & input)
             (*tmp)[rr][cc] = curEl;
             
             char c = input[iend];
-            if(c == ' ')
-                ++cc;
-            else if(c == ']'){
-                break;
-            } else {
-                cc = 0;
-                ++rr;
+            pos = iend;
+            while(c == ' '){
+                ++pos;
+                c = input[pos];
             }
+            ++cc;
 
-            pos = iend + 1;
+            if(c == ':'){
+                ++rr;
+                cc = 0;
+            } else if(c == ']'){
+                break;
+            }
             state = 1;
         }
     }
@@ -222,6 +225,19 @@ void Matrix::display(void) const {
         std::cout << std::endl;
     }
     std::cout << std::endl;
+}
+
+std::string Matrix::to_str(void) const {
+    std::stringstream ss;
+    ss << "[";
+    for(std::size_t i = 0; i < rows; ++i){
+        for(std::size_t j = 0; j < cols; ++j){
+            ss << m[i][j] << " ";
+        }
+        if(i+1 != rows){ss << ":";}
+    }
+    ss << "]";
+    return ss.str();
 }
 
 

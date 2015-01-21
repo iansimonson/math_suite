@@ -68,12 +68,12 @@ void ExpressionParser::parse(){
 
 	//expression();
 	infixToRPN();
-	while(!rpn.empty()){
+	/*while(!rpn.empty()){
 		std::cout << rpn.front().getText() << " ";
 		rpn.pop();
 	}
-	std::cout << std::endl;
-	//evaluate();
+	std::cout << std::endl;*/
+	evaluate();
 
 }
 
@@ -122,6 +122,122 @@ void ExpressionParser::infixToRPN(){
 
 void ExpressionParser::evaluate() {
 
+	Token t1,t2;
+	bool matFlag = false;
+
+	Matrix resultM;
+	double resultS;
+
+	std::stack<Token> values;
+	
+	while(!rpn.empty()){
+		switch(rpn.front().getType()){
+			case ExpressionLexer::MATRIX: 
+				matFlag = true;
+			case ExpressionLexer::SCALAR:
+				values.push(rpn.front());
+				
+				break;
+			case ExpressionLexer::PLUS: 
+				t1 = values.top();
+				values.pop();
+				t2 = values.top();
+				values.pop();
+
+				if(matFlag){
+					if(t1.getType() == ExpressionLexer::MATRIX && t2.getType() == ExpressionLexer::MATRIX){
+						resultM = MatProps::add(Matrix(t1.getText()),Matrix(t2.getText()));
+						values.push(Token(ExpressionLexer::MATRIX,resultM.to_str()));
+					} else if(t1.getType() == ExpressionLexer::SCALAR && t2.getType() == ExpressionLexer::SCALAR){
+						resultS = std::stod(t1.getText()) + std::stod(t2.getText());
+						values.push(Token(ExpressionLexer::SCALAR,std::to_string(resultS)));
+					} else {
+						throw 2;
+					}
+				} else {
+					resultS = std::stod(t1.getText()) + std::stod(t2.getText());
+					values.push(Token(ExpressionLexer::SCALAR,std::to_string(resultS)));
+				}
+
+				break;
+
+			case ExpressionLexer::MINUS:
+
+				t1 = values.top();
+				values.pop();
+				t2 = values.top();
+				values.pop();
+
+				if(matFlag){
+					if(t1.getType() == ExpressionLexer::MATRIX && t2.getType() == ExpressionLexer::MATRIX){
+						resultM = MatProps::add(Matrix(t1.getText()),MatProps::multiply(-1,Matrix(t2.getText())));
+						values.push(Token(ExpressionLexer::MATRIX,resultM.to_str()));
+					} else if(t1.getType() == ExpressionLexer::SCALAR && t2.getType() == ExpressionLexer::SCALAR){
+						resultS = std::stod(t1.getText()) - std::stod(t2.getText());
+						values.push(Token(ExpressionLexer::SCALAR,std::to_string(resultS)));
+					} else {
+						throw 2;
+					}
+				} else {
+					resultS = std::stod(t1.getText()) - std::stod(t2.getText());
+					values.push(Token(ExpressionLexer::SCALAR,std::to_string(resultS)));
+				}
+
+				break;
+
+			case ExpressionLexer::MULT:
+				t1 = values.top();
+				values.pop();
+				t2 = values.top();
+				values.pop();
+
+				if(t1.getType() == ExpressionLexer::MATRIX && t2.getType() == ExpressionLexer::MATRIX){
+					resultM = MatProps::multiply(Matrix(t1.getText()),Matrix(t2.getText()));
+					values.push(Token(ExpressionLexer::MATRIX,resultM.to_str()));
+				} else if(t1.getType() == ExpressionLexer::MATRIX && t2.getType() == ExpressionLexer::SCALAR){
+					resultM = MatProps::multiply(Matrix(t1.getText()),std::stod(t2.getText()));
+					values.push(Token(ExpressionLexer::MATRIX,resultM.to_str()));
+				} else if(t1.getType() == ExpressionLexer::SCALAR && t2.getType() == ExpressionLexer::MATRIX){
+					resultM = MatProps::multiply(std::stod(t1.getText()),Matrix(t2.getText()));
+					values.push(Token(ExpressionLexer::MATRIX,resultM.to_str()));
+				} else {
+					resultS = std::stod(t1.getText()) * std::stod(t2.getText());
+					values.push(Token(ExpressionLexer::SCALAR,std::to_string(resultS)));
+				}
+
+				break;
+
+			case ExpressionLexer::DIVIDE:
+				t1 = values.top();
+				values.pop();
+				t2 = values.top();
+				values.pop();
+				
+				if(t1.getType() == ExpressionLexer::MATRIX && t2.getType() == ExpressionLexer::SCALAR){
+					resultM = MatProps::divide(Matrix(t1.getText()),std::stod(t2.getText()));
+					values.push(Token(ExpressionLexer::MATRIX,resultM.to_str()));
+				} else if(t1.getType() == ExpressionLexer::SCALAR && t2.getType() == ExpressionLexer::MATRIX){
+					resultM = MatProps::divide(std::stod(t1.getText()),Matrix(t2.getText()));
+					values.push(Token(ExpressionLexer::MATRIX,resultM.to_str()));
+				} else if(t1.getType() == ExpressionLexer::SCALAR && t2.getType() == ExpressionLexer::SCALAR){
+					resultS = std::stod(t1.getText()) / std::stod(t2.getText());
+					values.push(Token(ExpressionLexer::SCALAR,std::to_string(resultS)));
+				} else {
+					throw 2;
+				}
+
+				break;
+				
+		}
+		rpn.pop();
+	}
+
+	if(matFlag){
+		t1 = values.top();
+		Matrix(t1.getText()).display();
+	} else {
+		std::cout << std::stod(values.top().getText()) << std::endl;
+	}
 }
 
 void ExpressionParser::expression(){

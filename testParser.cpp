@@ -8,5 +8,5 @@ int main() {
 	ExpressionLexer lexer(input);
 	ExpressionParser parser(lexer,3);
 	
-	parser.parse();
+	parser.parse(); 
 }

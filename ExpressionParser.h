@@ -2,6 +2,7 @@
 #define EXPRESSION_PARSER_H
 
 #include "ExpressionLexer.h"
+#include "matrix.h"
 #include <queue>
 #include <stack>
 
